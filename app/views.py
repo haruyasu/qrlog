@@ -79,7 +79,10 @@ class SystemView(LoginRequiredMixin, View):
             entered = form.cleaned_data['entered']
             exited = form.cleaned_data['exited']
             management_data = Management.objects.filter(
-                entered__gte=entered, exited__lte=exited)
+                user=request.user,
+                entered__gte=entered,
+                exited__lte=exited
+            )
             print(management_data)
 
             response = HttpResponse(content_type='text/csv; charset=Shift-JIS')
