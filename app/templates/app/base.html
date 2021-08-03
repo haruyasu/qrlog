@@ -11,19 +11,25 @@
 </head>
 
 <body>
-    <a href="/">ホーム</a>
-    {% if user.is_authenticated %}
-        <a href="{% url 'account_logout' %}">ログアウト</a>
-        <a href="{% url 'system' %}">管理画面</a>
-    {% else %}
-        <a href="{% url 'account_signup' %}">サインアップ</a>
-        <a href="{% url 'account_login' %}">ログイン</a>
-    {% endif %}
+    <header>
+        <a href="/">ホーム</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'account_logout' %}">ログアウト</a>
+            <a href="{% url 'system' %}">管理画面</a>
+        {% else %}
+            <a href="{% url 'account_signup' %}">サインアップ</a>
+            <a href="{% url 'account_login' %}">ログイン</a>
+        {% endif %}
+    </header>
 
     <main>
           {% block content %}
           {% endblock %}
     </main>
+
+    <footer>
+        <p>Copyright &copy; Footer 2021</p>
+    </footer>
 
     {% block extra_js %}
     {% endblock %}
