@@ -1,0 +1,22 @@
+{% extends "app/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<h1>管理画面</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div>
+        期間選択
+    </div>
+    <div>
+        {{ form.entered }}
+    </div>
+    <div>
+        {{ form.exited }}
+    </div>
+    <button type="submit">CSVダウンロード</button>
+</form>
+
+{% endblock %}
