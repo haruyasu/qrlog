@@ -12,6 +12,7 @@ from django.utils.timezone import localtime
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'app/index.html', {
+            'user': request.user
         })
 
 

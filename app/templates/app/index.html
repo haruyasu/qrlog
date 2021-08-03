@@ -5,6 +5,7 @@
 <h1>ログ取得サービス</h1>
 
 {% if user.is_authenticated %}
+  <h2>{{ user }}</h2>
   <a href="{% url 'enter' %}">入館</a>
   <a href="{% url 'exit' %}">退館</a>
 {% endif %}
