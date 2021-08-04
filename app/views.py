@@ -3,20 +3,29 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import EnterForm, ExitForm, SystemForm
 from .models import Management
-from datetime import datetime
+from datetime import datetime, date
 from django.http import HttpResponse
 import csv
 from django.utils.timezone import localtime
 
 
-class IndexView(View):
+class IndexView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return render(request, 'app/index.html', {
             'user': request.user
         })
 
 
-class EnterView(LoginRequiredMixin, View):
+class LogsView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'app/logs.html', {
+            'user': request.user,
+            'slug': self.kwargs['slug']
+        })
+
+
+class EnterView(View):
     def get(self, request, *args, **kwargs):
         form = EnterForm(request.POST or None)
 
@@ -26,22 +35,30 @@ class EnterView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         form = EnterForm(request.POST or None)
+        slug = self.kwargs['slug']
 
         if form.is_valid():
             management_data = Management()
-            management_data.user = request.user
             management_data.name = form.cleaned_data['name']
             management_data.tel = form.cleaned_data['tel']
             management_data.entered = datetime.now()
+            management_data.slug = slug
             management_data.save()
-            return redirect('index')
+            return redirect('enter_done')
 
         return render(request, 'app/enter.html', {
             'form': form
         })
 
 
-class ExitView(LoginRequiredMixin, View):
+class EnterDoneView(View):
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'app/enter_done.html', {
+        })
+
+
+class ExitView(View):
     def get(self, request, *args, **kwargs):
         form = ExitForm(request.POST or None)
 
@@ -51,16 +68,31 @@ class ExitView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         form = ExitForm(request.POST or None)
+        slug = self.kwargs['slug']
 
         if form.is_valid():
             tel = form.cleaned_data['tel']
-            management_data = Management.objects.get(tel=tel)
+            today = date.today()
+            today_start_str = str(today) + ' 00:00:00'
+            today_start = datetime.strptime(today_start_str, '%Y-%m-%d %H:%M:%S')
+
+            today_end_str = str(today) + ' 23:59:59'
+            today_end = datetime.strptime(today_end_str, '%Y-%m-%d %H:%M:%S')
+
+            management_data = Management.objects.get(slug=slug, tel=tel, entered__range=(today_start, today_end))
             management_data.exited = datetime.now()
             management_data.save()
-            return redirect('index')
+            return redirect('exit_done')
 
         return render(request, 'app/exit.html', {
             'form': form
+        })
+
+
+class ExitDoneView(View):
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'app/exit_done.html', {
         })
 
 
@@ -79,7 +111,7 @@ class SystemView(LoginRequiredMixin, View):
             entered = form.cleaned_data['entered']
             exited = form.cleaned_data['exited']
             management_data = Management.objects.filter(
-                user=request.user,
+                slug=request.user.slug,
                 entered__gte=entered,
                 exited__lte=exited
             )

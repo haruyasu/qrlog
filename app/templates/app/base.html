@@ -12,14 +12,8 @@
 
 <body>
     <header>
-        <a href="/">ホーム</a>
-        {% if user.is_authenticated %}
-            <a href="{% url 'account_logout' %}">ログアウト</a>
-            <a href="{% url 'system' %}">管理画面</a>
-        {% else %}
-            <a href="{% url 'account_signup' %}">サインアップ</a>
-            <a href="{% url 'account_login' %}">ログイン</a>
-        {% endif %}
+        {% block header %}
+        {% endblock %}
     </header>
 
     <main>

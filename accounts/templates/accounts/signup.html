@@ -1,9 +1,20 @@
 {% extends "app/base.html" %}
 {% load widget_tweaks %}
 
+{% block header %}
+    <a href="/">ホーム</a>
+    {% if user.is_authenticated %}
+        <a href="{% url 'account_logout' %}">ログアウト</a>
+        <a href="{% url 'system' %}">管理画面</a>
+    {% else %}
+        <a href="{% url 'account_signup' %}">サインアップ</a>
+        <a href="{% url 'account_login' %}">ログイン</a>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
 
-<h5>サインアップ</h5>
+<h1>サインアップ</h1>
 <form method="post">
     {% csrf_token %}
     <div>

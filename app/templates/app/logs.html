@@ -1,0 +1,17 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+
+<h1>{{ user }} - 入退館</h1>
+
+<a href="{% url 'enter' slug %}">
+  <button>入館</button>
+</a>
+
+<br>
+
+<a href="{% url 'exit' slug %}">
+  <button>退館</button>
+</a>
+
+{% endblock %}

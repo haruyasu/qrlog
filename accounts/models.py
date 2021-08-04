@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import UserManager, PermissionsMixin
+import uuid
 
 
 class UserManager(UserManager):
@@ -31,6 +32,7 @@ class UserManager(UserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('メールアドレス', unique=True)
     company = models.CharField('会社名', max_length=200)
+    slug = models.SlugField(default=uuid.uuid4)
     created = models.DateTimeField('入会日', auto_now=True)
 
     is_staff = models.BooleanField(

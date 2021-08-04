@@ -1,14 +1,22 @@
 {% extends "app/base.html" %}
 
+{% block header %}
+    <a href="/">ホーム</a>
+    {% if user.is_authenticated %}
+        <a href="{% url 'account_logout' %}">ログアウト</a>
+        <a href="{% url 'system' %}">管理画面</a>
+    {% else %}
+        <a href="{% url 'account_signup' %}">サインアップ</a>
+        <a href="{% url 'account_login' %}">ログイン</a>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
 
 <h1>ログ取得サービス</h1>
 
-{% if user.is_authenticated %}
-  <h2>{{ user }}</h2>
-  <a href="{% url 'enter' %}">入館</a>
-  <a href="{% url 'exit' %}">退館</a>
-{% endif %}
-
+<a href="{% url 'logs' user.slug %}">
+    このURLをQRコードに変換して提供する
+</a>
 
 {% endblock %}
