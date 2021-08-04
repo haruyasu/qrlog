@@ -15,8 +15,10 @@
 
 <h1>ログ取得サービス</h1>
 
-<a href="{% url 'logs' user.slug %}">
-    このURLをQRコードに変換して提供する
-</a>
+<a href="{% url 'logs' user.slug %}">提供URL</a>
+
+<br>
+
+<img src="data:image/png;base64,{{ qr }}"/>
 
 {% endblock %}

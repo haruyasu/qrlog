@@ -7,12 +7,25 @@ from datetime import datetime, date
 from django.http import HttpResponse
 import csv
 from django.utils.timezone import localtime
+import qrcode
+from io import BytesIO
+import base64
+
+
+DOMAIN = "http://127.0.0.1:8000/"
 
 
 class IndexView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        img = qrcode.make(DOMAIN + "logs/" + request.user.slug + "/")
+
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        qr = base64.b64encode(buffer.getvalue()).decode().replace("'", "")
+
         return render(request, 'app/index.html', {
-            'user': request.user
+            'user': request.user,
+            'qr': qr
         })
 
 
@@ -74,12 +87,14 @@ class ExitView(View):
             tel = form.cleaned_data['tel']
             today = date.today()
             today_start_str = str(today) + ' 00:00:00'
-            today_start = datetime.strptime(today_start_str, '%Y-%m-%d %H:%M:%S')
+            today_start = datetime.strptime(
+                today_start_str, '%Y-%m-%d %H:%M:%S')
 
             today_end_str = str(today) + ' 23:59:59'
             today_end = datetime.strptime(today_end_str, '%Y-%m-%d %H:%M:%S')
 
-            management_data = Management.objects.get(slug=slug, tel=tel, entered__range=(today_start, today_end))
+            management_data = Management.objects.get(
+                slug=slug, tel=tel, entered__range=(today_start, today_end))
             management_data.exited = datetime.now()
             management_data.save()
             return redirect('exit_done')
