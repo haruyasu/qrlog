@@ -13,6 +13,8 @@ import base64
 
 
 DOMAIN = "http://127.0.0.1:8000/"
+# ngrokを使用する場合
+# DOMAIN = "http://20a5be43a3ea.ngrok.io/"
 
 
 class IndexView(LoginRequiredMixin, View):
@@ -29,11 +31,10 @@ class IndexView(LoginRequiredMixin, View):
         })
 
 
-class LogsView(LoginRequiredMixin, View):
+class LogsView(View):
     def get(self, request, *args, **kwargs):
 
         return render(request, 'app/logs.html', {
-            'user': request.user,
             'slug': self.kwargs['slug']
         })
 
